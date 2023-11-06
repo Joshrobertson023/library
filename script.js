@@ -4,19 +4,25 @@
 /* Date:         November 3, 2023                                     */
 /* Author:       Josh Robertson                                       */
 /*                                                                    */
+/* This is a simple library. There is one button to add a book to the */
+/* library, then a form appears and the user can enter the book's     */
+/* author, title, number of pages, and check if it has been read or   */
+/* not. When the form is submitted the book is added to the library   */
+/* and added to the list of books. Next to each book listing is a     */
+/* delete button and a button to change the read status.              */
 /*                                                                    */
 /**********************************************************************/
 
 /**********************************************************************/
 /*                            DOM constants                           */
 /**********************************************************************/
-const show = document.getElementById('show'),
+const show = document.querySelector('.content'),
       btnAdd = document.getElementById('add'),
       dialog = document.querySelector('dialog'),
-      btnOK = document.querySelector('dialog button');
+      btnOK = document.querySelector('.secondary');
 
 /**********************************************************************/
-/*                          Global variables                          */
+/*                          Global declarations                       */
 /**********************************************************************/
 let library = [];
 
@@ -38,34 +44,41 @@ function addBookToLibrary(author, title, number, read) {
 }
 
 function displayBook(book) {
-   const showLine = document.createElement('li');
-   const divText = document.createElement('div');
+   const showLine = document.createElement('div');
+   showLine.classList.add('card');
+   const authorText = document.createElement('p'),
+         titleText = document.createElement('p'),
+         pagesText = document.createElement('p'),
+         readText = document.createElement('p');
    show.appendChild(showLine);
    
    const btnRemove = document.createElement('button');
    const btnRead = document.createElement('button');
    
-   showLine.appendChild(divText);
+   showLine.appendChild(authorText);
+   showLine.appendChild(titleText);
+   showLine.appendChild(pagesText);
+   showLine.appendChild(readText);
    showLine.appendChild(btnRemove);
    showLine.appendChild(btnRead);
    
    btnRemove.textContent = "Delete";
    btnRead.textContent = "Mark as read";
    
-   updateDiv(divText, btnRead, book.author, book.title, book.pages, book.read);
+   updateDiv(showLine, authorText, titleText, pagesText, readText, btnRead, book.author, book.title, book.pages, book.read);
    
    btnRemove.addEventListener('click', () => {
       showLine.remove();
       removeBookFromLibrary(book);
-      // Remove book from library array
    })
+
    btnRead.addEventListener('click', () => {
       if(book.read) {
          book.read = false;
       } else {
          book.read = true;
       }
-      updateDiv(divText, btnRead, book.author, book.title, book.pages, book.read);
+      updateDiv(showLine, btnRead, book.author, book.title, book.pages, book.read);
    })
 }
 
@@ -74,16 +87,16 @@ function removeBookFromLibrary(book) {
    library.splice(bookIndex, 1);
 }
 
-function updateDiv(divText, btnRead, author, title, pages, read) {
-   divText.textContent = '';
-   divText.textContent = `Author: ${author}; 
-   Title: ${title}; 
-   Num of Pages: ${pages}; `;
+function updateDiv(showLine, authorText, titleText, pagesText, readText, btnRead, author, title, pages, read) {
+   showLine.textContent = '';
+   authorText.value = `Author: ${author}`;
+   titleText.textContent = `Title: ${title}`;
+   pagesText.textContent = `Num of Pages: ${pages}`;
    if(read) {
-      divText.textContent += `Has been read.`;
+      readText.textContent = `Has been read.`;
       btnRead.textContent = 'Mark as unread'
    } else {
-      divText.textContent += `Has not been read.`;
+      readText.textContent = `Has not been read.`;
       btnRead.textContent = 'Mark as read';
    }
 }
