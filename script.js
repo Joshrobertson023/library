@@ -44,31 +44,33 @@ function addBookToLibrary(author, title, number, read) {
 }
 
 function displayBook(book) {
-   const showLine = document.createElement('div');
-   showLine.classList.add('card');
+   const card = document.createElement('div');
+   card.classList.add('card');
    const authorText = document.createElement('p'),
          titleText = document.createElement('p'),
          pagesText = document.createElement('p'),
          readText = document.createElement('p');
-   show.appendChild(showLine);
+   show.appendChild(card);
    
    const btnRemove = document.createElement('button');
+   btnRemove.classList.add('card-button');
    const btnRead = document.createElement('button');
+   btnRead.classList.add('card-button');
    
-   showLine.appendChild(authorText);
-   showLine.appendChild(titleText);
-   showLine.appendChild(pagesText);
-   showLine.appendChild(readText);
-   showLine.appendChild(btnRemove);
-   showLine.appendChild(btnRead);
+   card.appendChild(authorText);
+   card.appendChild(titleText);
+   card.appendChild(pagesText);
+   card.appendChild(readText);
+   card.appendChild(btnRemove);
+   card.appendChild(btnRead);
    
    btnRemove.textContent = "Delete";
    btnRead.textContent = "Mark as read";
    
-   updateDiv(showLine, authorText, titleText, pagesText, readText, btnRead, book.author, book.title, book.pages, book.read);
+   updateDiv(authorText, titleText, pagesText, readText, btnRead, book.author, book.title, book.pages, book.read);
    
    btnRemove.addEventListener('click', () => {
-      showLine.remove();
+      card.remove();
       removeBookFromLibrary(book);
    })
 
@@ -78,7 +80,7 @@ function displayBook(book) {
       } else {
          book.read = true;
       }
-      updateDiv(showLine, btnRead, book.author, book.title, book.pages, book.read);
+      updateDiv(authorText, titleText, pagesText, readText, btnRead, book.author, book.title, book.pages, book.read);
    })
 }
 
@@ -87,16 +89,15 @@ function removeBookFromLibrary(book) {
    library.splice(bookIndex, 1);
 }
 
-function updateDiv(showLine, authorText, titleText, pagesText, readText, btnRead, author, title, pages, read) {
-   showLine.textContent = '';
-   authorText.value = `Author: ${author}`;
+function updateDiv(authorText, titleText, pagesText, readText, btnRead, author, title, pages, read) {
+   authorText.textContent = `Author: ${author}`;
    titleText.textContent = `Title: ${title}`;
    pagesText.textContent = `Num of Pages: ${pages}`;
    if(read) {
-      readText.textContent = `Has been read.`;
+      readText.textContent = `Read: Yes`;
       btnRead.textContent = 'Mark as unread'
    } else {
-      readText.textContent = `Has not been read.`;
+      readText.textContent = `Read: No`;
       btnRead.textContent = 'Mark as read';
    }
 }
