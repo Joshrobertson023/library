@@ -18,47 +18,18 @@ const show = document.getElementById('show'),
 /**********************************************************************/
 /*                          Global variables                          */
 /**********************************************************************/
-
-
-/**********************************************************************/
-/*                            Main program                            */
-/**********************************************************************/
-
 let library = [];
 
-function Book(author, title, numPages, beenRead) {
+function Book(author, title, pages, read) {
    this.author = author;
    this.title = title;
-   this.numPages = numPages;
-   this.beenRead = beenRead;
+   this.pages = pages;
+   this.read = read;
 }
 
-btnAdd.addEventListener('click', () => {
-   dialog.showModal();
-
-   let addBookForm = document.getElementById('addBookForm');
-
-   addBookForm.addEventListener("submit", (e) => {
-      e.preventDefault();
-
-      let author = document.getElementById('inputAuthor');
-      let title = document.getElementById('inputTitle');
-      let number = document.getElementById('inputNumber');
-      let read = document.getElementById('inputRead');
-
-      if(author.value === "" || title.value === "" || number.value === "") {
-         alert("Make sure all fields are filled.");
-      } else {
-         addBookToLibrary(author.value, title.value, number.value, read.checked);
-         author.value = "";
-         title.value = "";
-         number.value = "";
-         read.checked = false;
-         dialog.close();
-      }
-   });
-});
-
+/**********************************************************************/
+/*                              Functions                             */
+/**********************************************************************/
 function addBookToLibrary(author, title, number, read) {
    let book = new Book(author, title, number, read);
    library.unshift(book);
@@ -67,34 +38,40 @@ function addBookToLibrary(author, title, number, read) {
 }
 
 function displayBook(book) {
-      const showLine = document.createElement('li');
-      const divText = document.createElement('div');
-      show.appendChild(showLine);
+   const showLine = document.createElement('li');
+   const divText = document.createElement('div');
+   show.appendChild(showLine);
+   
+   const btnRemove = document.createElement('button');
+   const btnRead = document.createElement('button');
+   
+   showLine.appendChild(divText);
+   showLine.appendChild(btnRemove);
+   showLine.appendChild(btnRead);
+   
+   btnRemove.textContent = "Delete";
+   btnRead.textContent = "Mark as read";
+   
+   updateDiv(divText, btnRead, book.author, book.title, book.pages, book.read);
+   
+   btnRemove.addEventListener('click', () => {
+      showLine.remove();
+      removeBookFromLibrary(book);
+      // Remove book from library array
+   })
+   btnRead.addEventListener('click', () => {
+      if(book.read) {
+         book.read = false;
+      } else {
+         book.read = true;
+      }
+      updateDiv(divText, btnRead, book.author, book.title, book.pages, book.read);
+   })
+}
 
-      const btnRemove = document.createElement('button');
-      const btnRead = document.createElement('button');
-
-      showLine.appendChild(divText);
-      showLine.appendChild(btnRemove);
-      showLine.appendChild(btnRead);
-      
-      btnRemove.textContent = "Delete";
-      btnRead.textContent = "Mark as read";
-
-      updateDiv(divText, btnRead, book.author, book.title, book.numPages, book.beenRead);
-
-      btnRemove.addEventListener('click', () => {
-         showLine.remove();
-         // remove from library array
-      })
-      btnRead.addEventListener('click', () => {
-         if(book.beenRead) {
-            book.beenRead = false;
-         } else {
-            book.beenRead = true;
-         }
-         updateDiv(divText, btnRead, book.author, book.title, book.numPages, book.beenRead);
-      })
+function removeBookFromLibrary(book) {
+   let bookIndex = library.indexOf(book);
+   library.splice(bookIndex, 1);
 }
 
 function updateDiv(divText, btnRead, author, title, pages, read) {
@@ -110,3 +87,29 @@ function updateDiv(divText, btnRead, author, title, pages, read) {
       btnRead.textContent = 'Mark as read';
    }
 }
+
+/**********************************************************************/
+/*                            Main program                            */
+/**********************************************************************/
+btnAdd.addEventListener('click', () => {
+   dialog.showModal();
+
+   btnOK.addEventListener('click', () => {
+      let author = document.getElementById('inputAuthor');
+      let title = document.getElementById('inputTitle');
+      let number = document.getElementById('inputNumber');
+      let read = document.getElementById('inputRead');
+
+      if(author.value == "" || title.value == "" || number.value == "") { // In case submitted multiple times
+         dialog.close();
+      } else {
+         console.log(read.checked);
+         addBookToLibrary(author.value, title.value, number.value, read.checked);
+         author.value = "";
+         title.value = "";
+         number.value = "";
+         read.checked = false;
+      }
+      dialog.close();
+   });
+});
